@@ -30,7 +30,22 @@ public final class Constants {
 
     /* -------------- SUBSYTEM CONSTANTS -------------- */
 
+    public static final class ClimberConstants {
+        public enum ClimberPosition {
+            zero(0),
+            up(1),
+            forward(2);
 
+            private double setpoint;
+            ClimberPosition(double setpoint) {
+                this.setpoint = setpoint;
+            };
+
+            public double getAngle() {
+                return setpoint;
+            }
+        }
+    }
     
     /* -------------- DRIVETRAIN CONSTANTS -------------- */
 
@@ -122,3 +137,4 @@ public final class Constants {
         }
     }
 }
+
