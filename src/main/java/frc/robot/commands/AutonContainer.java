@@ -1,19 +1,15 @@
 package frc.robot.commands;
 
-import static frc.robot.Constants.SwerveConstants.*;
+import static frc.robot.Constants.PathPlannerConfigs.PP_CONFIG;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.SwerveConstants.ModuleConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.CTRESwerveDrivetrain;
 
@@ -26,25 +22,19 @@ public class AutonContainer {
         this.drivetrain = robot.drivetrain;
         registerNamedCommands();
 
-        RobotConfig config;
-        ModuleConfig moduleConfig;
-        DCMotor motor = new DCMotor(12.6, 5, 40, 20, 5, 1);
-        moduleConfig = new ModuleConfig(ModuleConstants.WHEEL_DIAMETER / 2, MAX_TRANSLATION_SPEED, 1, motor, 20, 1);
-        config = new RobotConfig(45, 3.5, moduleConfig, MODULE_TRANSLATIONS);
-
-
         AutoBuilder.configure(
             drivetrain::getPose, 
             drivetrain::resetPose,
             drivetrain::getChassisSpeeds,
             (speeds, feedforwards) -> drivetrain.driveRobotRelative(speeds),
-            new PPHolonomicDriveController( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PPHolonomicDriveController(
                     new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
             ),
-            config,
+            PP_CONFIG,
             () -> robot.onRedAlliance(),
-            drivetrain);
+            drivetrain
+        );
     }
 
     private void registerNamedCommands() {

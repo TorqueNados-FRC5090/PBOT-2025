@@ -1,8 +1,15 @@
 package frc.robot;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
+
 // Imports
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 /* 
@@ -21,53 +28,51 @@ public final class Constants {
         public static final int OPERATOR_PORT = 1;
     }
 
-    /** IDs used by the swerve drivetrain.
-        3X for turning, 4X for driving, 5X for abs encoders. */
-    public static final class SwerveIDs {
-        // Front left module
-        public static final int FL_TURN_ID = 30;
-        public static final int FL_DRIVE_ID = 40;
-        public static final int FL_ENCODER_ID = 50;
-        // Front right module
-        public static final int FR_TURN_ID = 31;
-        public static final int FR_DRIVE_ID = 41;
-        public static final int FR_ENCODER_ID = 51;
-        // Rear left module
-        public static final int RL_TURN_ID = 32;
-        public static final int RL_DRIVE_ID = 42;
-        public static final int RL_ENCODER_ID = 52;
-        // Rear right module
-        public static final int RR_TURN_ID = 33;
-        public static final int RR_DRIVE_ID = 43;
-        public static final int RR_ENCODER_ID = 53;
-    }
-
     /* -------------- SUBSYTEM CONSTANTS -------------- */
 
-    /** Turning a module to absolute 0 minus its offset will point it forward */
-    public static final class SwerveModuleOffsets {
-        public static final double FL_OFFSET = 0;
-        public static final double FR_OFFSET = 0;
-        public static final double RL_OFFSET = 0;
-        public static final double RR_OFFSET = 0;
+
+    
+    /* -------------- DRIVETRAIN CONSTANTS -------------- */
+
+    public static final class DriveConstants {
+        /** Higher values make the robot drive more aggressively */
+        public static final double TRANSLATION_SLEW = 4;
+        /** Higher values make the robot spin more aggressively */
+        public static final double ROTATION_SLEW = 6;
+
+        /** The maximum allowed driving speed of the robot */
+        public static final double MAX_TRANSLATION_SPEED = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        /** The maximum allowed spinning speed of the robot */
+        public static final double MAX_ROTATION_SPEED = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        
+        /** Translation instructions closer to 0 than the deadband will be set to 0 */
+        public static final double TRANSLATION_DEADBAND = .07 * MAX_TRANSLATION_SPEED;
+        /** Rotation instructions closer to 0 than the deadband will be set to 0 */
+        public static final double ROTATION_DEADBAND = .1 * MAX_ROTATION_SPEED;
     }
 
-    /** Whether or not each swerve component should be inverted/reversed */
-    public static final class SwerveInversions {
-        // Whether each driving motor should be inverted
-        public static final boolean INVERT_FL_DRIVE = false;
-        public static final boolean INVERT_FR_DRIVE = true;
-        public static final boolean INVERT_RL_DRIVE = false;
-        public static final boolean INVERT_RR_DRIVE = true;
+    public static final class PathPlannerConfigs {
+        private static final DCMotor DRIVE_MOTOR = 
+            new DCMotor(12.6, 5, 40, 20, 5, 1);
+            
+        private static final ModuleConfig MODULE_CONFIG = 
+            new ModuleConfig(
+                SwerveConstants.ModuleConstants.WHEEL_DIAMETER / 2, 
+                DriveConstants.MAX_TRANSLATION_SPEED, 
+                1, DRIVE_MOTOR, 20, 1
+            );
 
-        // Whether each turning motor should be inverted
-        public static final boolean INVERT_FL_TURN = true;
-        public static final boolean INVERT_FR_TURN = true;
-        public static final boolean INVERT_RL_TURN = true;
-        public static final boolean INVERT_RR_TURN = true;
+        public static final RobotConfig PP_CONFIG = 
+            new RobotConfig(
+                45, 3.5, 
+                MODULE_CONFIG, 
+                SwerveConstants.MODULE_TRANSLATIONS
+            );
     }
 
-    /** Constants related to swerve calculations */
+    /** Constants related to swerve calculations
+     *  This information is less important since moving to CTRE, 
+     *  but is kept for documentation purposes, and niche cases like PathPlanner configuration. */
     public static final class SwerveConstants {
         /** The distance between the left and right wheels in inches */
         public static final double TRACK_WIDTH = Units.inchesToMeters(22);
@@ -82,20 +87,9 @@ public final class Constants {
             new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2)   // RR
         };
 
-        // Kinematics are used to calculate how each module needs to move
-        // in order to move the robot as a whole in a certain way
-
         /** Standard kinematics with center of rotation located at the center of the robot */
         public static final SwerveDriveKinematics SWERVE_KINEMATICS =
             new SwerveDriveKinematics(MODULE_TRANSLATIONS);
-
-        /** The max speed the robot is allowed to drive in m/sec */
-        public static final double MAX_TRANSLATION_SPEED = 4.5;
-        /** The max speed the robot is allowed to spin in rads/sec */
-        public static final double MAX_ROTATION_SPEED = Math.PI;
-        public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS =
-            new TrapezoidProfile.Constraints(
-                MAX_ROTATION_SPEED, Math.PI * 2);
 
         public static final class ModuleConstants {
             /** The ratio of the drive motors on the workhorse chassis */
@@ -126,17 +120,5 @@ public final class Constants {
             REAR_LEFT,
             REAR_RIGHT
         }
-    }
-
-  public static final class DriveConstants {
-            /** Higher values make the robot drive more aggressively */
-            public static final double TRANSLATION_SLEW = 4;
-            /** Higher values make the robot spin more aggressively */
-            public static final double ROTATION_SLEW = 6;
-    
-            /** Translation instructions closer to 0 than the deadband will be set to 0 */
-            public static final double TRANSLATION_DEADBAND = .05;
-            /** Rotation instructions closer to 0 than the deadband will be set to 0 */
-            public static final double ROTATION_DEADBAND = .1;
     }
 }

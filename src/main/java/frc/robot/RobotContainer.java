@@ -1,7 +1,7 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ControllerPorts.*;
+import static frc.robot.Constants.DriveConstants.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -18,10 +18,8 @@ import frc.robot.subsystems.CTRESwerveDrivetrain;
 
 public class RobotContainer {
     // CTRE drivetrain control functions
-    private double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double maxSpinSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(maxSpeed * 0.1).withRotationalDeadband(maxSpinSpeed * 0.1)
+            .withDeadband(TRANSLATION_DEADBAND).withRotationalDeadband(ROTATION_DEADBAND)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -34,7 +32,7 @@ public class RobotContainer {
     // Misc objects
     private final AutonContainer auton = new AutonContainer(this);
     private final SendableChooser<Command> autonChooser = auton.buildAutonChooser();
-    private final Telemetry logger = new Telemetry(maxSpeed);
+    private final Telemetry logger = new Telemetry(MAX_TRANSLATION_SPEED);
 
     /** Constructs a RobotContainer */
     public RobotContainer() {
@@ -55,9 +53,9 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(driverController.getLeftY() * maxSpeed) 
-                    .withVelocityY(-driverController.getLeftX() * maxSpeed)
-                    .withRotationalRate(driverController.getRightX() * maxSpinSpeed) 
+                drive.withVelocityX(driverController.getLeftY() * MAX_TRANSLATION_SPEED) 
+                    .withVelocityY(-driverController.getLeftX() * MAX_TRANSLATION_SPEED)
+                    .withRotationalRate(driverController.getRightX() * MAX_ROTATION_SPEED) 
             )
         );
 
