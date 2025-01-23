@@ -14,7 +14,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AutonContainer;
+import frc.robot.commands.Shoot;
 import frc.robot.subsystems.CTRESwerveDrivetrain;
+import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
     // CTRE drivetrain control functions
@@ -29,6 +31,7 @@ public class RobotContainer {
     private final CommandXboxController operatorController = new CommandXboxController(OPERATOR_PORT);
     // Subsystems
     public final CTRESwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Shooter shoot = new Shooter(10, 11);
     // Misc objects
     private final AutonContainer auton = new AutonContainer(this);
     private final SendableChooser<Command> autonChooser = auton.buildAutonChooser();
@@ -81,6 +84,7 @@ public class RobotContainer {
     private void setOperatorControls() {
         // Runs the auton command as an example binding
         operatorController.a().whileTrue(getAutonomousCommand());
+        operatorController.y().whileTrue(new Shoot(shoot, .45));
     }
 
     /** Use this to pass the autonomous command to the main {@link Robot} class. */
