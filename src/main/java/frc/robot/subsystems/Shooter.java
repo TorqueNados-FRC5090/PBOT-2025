@@ -15,6 +15,8 @@ public class Shooter extends SubsystemBase{
     public Shooter(int leadID, int followID){
         leadMotor = new SparkMax(leadID, MotorType.kBrushless);
         followMotor = new SparkMax(followID, MotorType.kBrushless);
+       
+       // configuration for follower motor
         SparkMaxConfig followConfig = new SparkMaxConfig();
         followConfig.follow(leadID, true);
         
