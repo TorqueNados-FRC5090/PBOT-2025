@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ClimberConstants.ClimberPosition;
 import frc.robot.commands.AutonContainer;
+import frc.robot.commands.Shoot;
+import frc.robot.subsystems.Shooter;
 import frc.robot.commands.ClimberUp;
 import frc.robot.subsystems.CTRESwerveDrivetrain;
 import frc.robot.subsystems.Climber;
@@ -32,7 +34,9 @@ public class RobotContainer {
     private final CommandXboxController operatorController = new CommandXboxController(OPERATOR_PORT);
     // Subsystems
     public final CTRESwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Shooter shoot = new Shooter(10, 11);
     private final Climber climber = new Climber(12, .27);
+
     // Misc objects
     private final AutonContainer auton = new AutonContainer(this);
     private final SendableChooser<Command> autonChooser = auton.buildAutonChooser();
@@ -57,9 +61,9 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(driverController.getLeftY() * MAX_TRANSLATION_SPEED) 
+                drive.withVelocityX(-driverController.getLeftY() * MAX_TRANSLATION_SPEED) 
                     .withVelocityY(-driverController.getLeftX() * MAX_TRANSLATION_SPEED)
-                    .withRotationalRate(driverController.getRightX() * MAX_ROTATION_SPEED) 
+                    .withRotationalRate(-driverController.getRightX() * MAX_ROTATION_SPEED) 
             )
         );
 
@@ -84,7 +88,7 @@ public class RobotContainer {
     /** Configures a set of control bindings for the robot's operator */
     private void setOperatorControls() {
         // Runs the auton command as an example binding
-        operatorController.a().whileTrue(getAutonomousCommand());
+        operatorController.rightTrigger().whileTrue(new Shoot(shoot, .45));
         operatorController.b().whileTrue(new ClimberUp(climber, ClimberPosition.zero));
         operatorController.x().whileTrue(new ClimberUp(climber, ClimberPosition.climb));
         operatorController.y().whileTrue(new ClimberUp(climber, ClimberPosition.stow));
