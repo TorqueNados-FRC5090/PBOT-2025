@@ -20,18 +20,18 @@ public class Climber extends SubsystemBase {
        climbMotor = new SparkMax(climberID, MotorType.kBrushless);
        climberPID = new GenericPID(climbMotor, ControlType.kPosition, p);
     }
-
+   // moves climber to any position
     public void moveClimber(double speed){
         climbMotor.set(speed);
     }
 
+    // moves climber to setpoints
     public void climbTo(ClimberPosition pos){
         climberPID.activate(pos.getAngle());
     }
 
     public void stop(){
         climbMotor.set(0);
-        
     }
 
     @Override

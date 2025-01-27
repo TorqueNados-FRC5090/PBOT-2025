@@ -32,11 +32,11 @@ public class RobotContainer {
     private final CommandXboxController operatorController = new CommandXboxController(OPERATOR_PORT);
     // Subsystems
     public final CTRESwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final Climber climber = new Climber(12, .27);
     // Misc objects
     private final AutonContainer auton = new AutonContainer(this);
     private final SendableChooser<Command> autonChooser = auton.buildAutonChooser();
     private final Telemetry logger = new Telemetry(MAX_TRANSLATION_SPEED);
-    private final Climber climber = new Climber(9, .027);
 
     /** Constructs a RobotContainer */
     public RobotContainer() {
@@ -86,8 +86,8 @@ public class RobotContainer {
         // Runs the auton command as an example binding
         operatorController.a().whileTrue(getAutonomousCommand());
         operatorController.b().whileTrue(new ClimberUp(climber, ClimberPosition.zero));
-        operatorController.x().whileTrue(new ClimberUp(climber, ClimberPosition.forward));
-        operatorController.y().whileTrue(new ClimberUp(climber, ClimberPosition.up));
+        operatorController.x().whileTrue(new ClimberUp(climber, ClimberPosition.climb));
+        operatorController.y().whileTrue(new ClimberUp(climber, ClimberPosition.stow));
     }
 
     /** Use this to pass the autonomous command to the main {@link Robot} class. */

@@ -32,15 +32,17 @@ public final class Constants {
 
     public static final class ClimberConstants {
         public enum ClimberPosition {
+            //climber setpoints
             zero(0),
-            up(1),
-            forward(2);
+            stow(16.4),
+            climb(-41.4);
 
             private double setpoint;
             ClimberPosition(double setpoint) {
                 this.setpoint = setpoint;
             };
 
+            //gets the angle of setpoint
             public double getAngle() {
                 return setpoint;
             }
