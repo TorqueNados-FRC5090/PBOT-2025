@@ -13,10 +13,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.ClimberConstants.ClimberPosition;
 import frc.robot.commands.AutonContainer;
 import frc.robot.commands.Shoot;
-import frc.robot.subsystems.CTRESwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
+import frc.robot.commands.ClimberUp;
+import frc.robot.subsystems.CTRESwerveDrivetrain;
+import frc.robot.subsystems.Climber;
 
 public class RobotContainer {
     // CTRE drivetrain control functions
@@ -32,6 +35,8 @@ public class RobotContainer {
     // Subsystems
     public final CTRESwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final Shooter shoot = new Shooter(10, 11);
+    private final Climber climber = new Climber(12, .27);
+
     // Misc objects
     private final AutonContainer auton = new AutonContainer(this);
     private final SendableChooser<Command> autonChooser = auton.buildAutonChooser();
@@ -83,8 +88,10 @@ public class RobotContainer {
     /** Configures a set of control bindings for the robot's operator */
     private void setOperatorControls() {
         // Runs the auton command as an example binding
-        operatorController.a().whileTrue(getAutonomousCommand());
-        operatorController.y().whileTrue(new Shoot(shoot, .45));
+        operatorController.rightTrigger().whileTrue(new Shoot(shoot, .45));
+        operatorController.b().whileTrue(new ClimberUp(climber, ClimberPosition.zero));
+        operatorController.x().whileTrue(new ClimberUp(climber, ClimberPosition.climb));
+        operatorController.y().whileTrue(new ClimberUp(climber, ClimberPosition.stow));
     }
 
     /** Use this to pass the autonomous command to the main {@link Robot} class. */
