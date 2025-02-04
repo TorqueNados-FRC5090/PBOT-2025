@@ -88,7 +88,9 @@ public class RobotContainer {
     /** Configures a set of control bindings for the robot's operator */
     private void setOperatorControls() {
         // Runs the auton command as an example binding
+        operatorController.leftTrigger().whileTrue(new Shoot(shoot, -.45));
         operatorController.rightTrigger().whileTrue(new Shoot(shoot, .45));
+        operatorController.rightBumper().whileTrue(new Shoot(shoot, .85));
         operatorController.b().whileTrue(new ClimberUp(climber, ClimberPosition.zero));
         operatorController.x().whileTrue(new ClimberUp(climber, ClimberPosition.climb));
         operatorController.y().whileTrue(new ClimberUp(climber, ClimberPosition.stow));

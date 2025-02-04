@@ -76,12 +76,12 @@ public final class Constants {
             new ModuleConfig(
                 SwerveConstants.ModuleConstants.WHEEL_DIAMETER / 2, 
                 DriveConstants.MAX_TRANSLATION_SPEED, 
-                1, DRIVE_MOTOR, 20, 1
+                1, DRIVE_MOTOR, 60, 1
             );
 
         public static final RobotConfig PP_CONFIG = 
             new RobotConfig(
-                45, 3.5, 
+                40, 4, 
                 MODULE_CONFIG, 
                 SwerveConstants.MODULE_TRANSLATIONS
             );
@@ -92,9 +92,9 @@ public final class Constants {
      *  but is kept for documentation purposes, and niche cases like PathPlanner configuration. */
     public static final class SwerveConstants {
         /** The distance between the left and right wheels in inches */
-        public static final double TRACK_WIDTH = Units.inchesToMeters(22);
+        public static final double TRACK_WIDTH = Units.inchesToMeters(23);
         /** The distance between the front and rear wheels in inches */
-        public static final double WHEEL_BASE = Units.inchesToMeters(27);
+        public static final double WHEEL_BASE = Units.inchesToMeters(23);
 
         /** An array containing the position of each module as a {@link Translation2d} object */
         public static final Translation2d[] MODULE_TRANSLATIONS = {

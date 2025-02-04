@@ -51,8 +51,8 @@ public class CTRESwerveDrivetrain extends TunerSwerveDrivetrain implements Subsy
     }
     /** Drives in robot-centric mode given a ChassisSpeeds containing the desired velocity of the robot */
     public void driveRobotRelative(ChassisSpeeds speeds) {
-        SwerveRequest.ApplyRobotSpeeds drive = new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds);
-        this.applyRequest(() -> drive);
+        SwerveRequest.ApplyRobotSpeeds drive = new SwerveRequest.ApplyRobotSpeeds();
+        setControl(drive.withSpeeds(speeds));
     }
 
     /* -------------- CONSTRUCTORS -------------- */

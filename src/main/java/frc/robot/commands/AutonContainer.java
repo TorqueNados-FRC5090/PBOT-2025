@@ -5,6 +5,7 @@ import static frc.robot.Constants.PathPlannerConfigs.PP_CONFIG;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -22,6 +23,12 @@ public class AutonContainer {
         this.drivetrain = robot.drivetrain;
         registerNamedCommands();
 
+        // Attempt to load the pathplanner config from GUI
+        // Fallback onto the config in Constants because it's better than crashing
+        RobotConfig config = PP_CONFIG;
+        try { config = RobotConfig.fromGUISettings(); }
+        catch (Exception e) { e.printStackTrace(); }
+
         AutoBuilder.configure(
             drivetrain::getPose, 
             drivetrain::resetPose,
@@ -31,7 +38,7 @@ public class AutonContainer {
                     new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
             ),
-            PP_CONFIG,
+            config,
             () -> robot.onRedAlliance(),
             drivetrain
         );
@@ -44,6 +51,7 @@ public class AutonContainer {
     public SendableChooser<Command> buildAutonChooser() {
         SendableChooser<Command> chooser = new SendableChooser<Command>();
         chooser.setDefaultOption("Do Nothing", doNothing());
+        chooser.addOption("test", AutoBuilder.buildAuto("TestCircle"));
         return chooser;
     }
 
