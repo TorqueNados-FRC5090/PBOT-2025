@@ -13,11 +13,13 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +32,8 @@ import frc.robot.TunerConstants.TunerSwerveDrivetrain;
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CTRESwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+    private LimeLight odometryLimelight;
+
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -69,9 +73,11 @@ public class CTRESwerveDrivetrain extends TunerSwerveDrivetrain implements Subsy
      */
     public CTRESwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
+        LimeLight odometryLimelight,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, modules);
+        this.odometryLimelight = odometryLimelight;
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -220,7 +226,7 @@ public class CTRESwerveDrivetrain extends TunerSwerveDrivetrain implements Subsy
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine
      * specified by {@link #m_sysIdRoutineToApply}.
-     *
+     *e
      * @param direction Direction of the SysId Quasistatic test
      * @return Command to run
      */
@@ -241,6 +247,15 @@ public class CTRESwerveDrivetrain extends TunerSwerveDrivetrain implements Subsy
 
     @Override
     public void periodic() {
+        double[] llPose = odometryLimelight.getBotPoseField();
+        Pose2d pose = new Pose2d(
+            new Translation2d(llPose[0], llPose[2]),
+            new Rotation2d(llPose[5])
+        );
+        this.addVisionMeasurement(pose, Utils.getCurrentTimeSeconds());
+
+        SmartDashboard.putNumber("PoseX", getState().Pose.getX());
+        SmartDashboard.putNumber("PoseY", getState().Pose.getY());
         /*
          * Periodically try to apply the operator perspective.
          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.

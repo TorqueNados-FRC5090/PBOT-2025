@@ -20,6 +20,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.commands.ClimberUp;
 import frc.robot.subsystems.CTRESwerveDrivetrain;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.LimeLight;
 
 public class RobotContainer {
     // CTRE drivetrain control functions
@@ -33,7 +34,8 @@ public class RobotContainer {
     private final CommandXboxController driverController = new CommandXboxController(DRIVER_PORT);
     private final CommandXboxController operatorController = new CommandXboxController(OPERATOR_PORT);
     // Subsystems
-    public final CTRESwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final LimeLight frontLimelight = new LimeLight("limelight-ultron");
+    public final CTRESwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(frontLimelight);
     public final Shooter shoot = new Shooter(10, 11);
     private final Climber climber = new Climber(12, .27);
 
