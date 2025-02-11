@@ -48,6 +48,25 @@ public final class Constants {
             }
         }
     }
+
+    public static final class AlgaeConstants {
+        public enum AlgaePosition {
+            //climber setpoints
+            zero(0),
+            intake(16.7);
+    
+            private double setpoint;
+            AlgaePosition(double setpoint) {
+                this.setpoint = setpoint;
+            };
+    
+            //gets the angle of setpoint
+            public double getAngle() {
+                return setpoint;
+            }
+        }   
+    
+}
     
     /* -------------- DRIVETRAIN CONSTANTS -------------- */
 

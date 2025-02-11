@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.AlgaeConstants.AlgaePosition;
 import frc.robot.Constants.ClimberConstants.ClimberPosition;
 import frc.robot.commands.AutonContainer;
 import frc.robot.commands.Shoot;
@@ -20,6 +21,11 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.commands.ClimberUp;
 import frc.robot.subsystems.CTRESwerveDrivetrain;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ServoTest;
+import frc.robot.subsystems.AlgaeIntake;
+import frc.robot.commands.IntakeTime;
+import frc.robot.commands.RotateTime;
+import frc.robot.commands.ServoGo;
 
 public class RobotContainer {
     // CTRE drivetrain control functions
@@ -36,6 +42,9 @@ public class RobotContainer {
     public final CTRESwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final Shooter shoot = new Shooter(10, 11);
     private final Climber climber = new Climber(12, .27);
+    public final AlgaeIntake Intake = new AlgaeIntake(14,13);
+    public final ServoTest servo = new ServoTest();
+    
 
     // Misc objects
     private final AutonContainer auton = new AutonContainer(this);
@@ -78,15 +87,18 @@ public class RobotContainer {
         driverController.back().and(driverController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
+        
         // reset the field-centric heading on left bumper press
         driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
+        driverController.rightTrigger().whileTrue(new IntakeTime(Intake, AlgaePosition.zero)); 
+        driverController.rightBumper().whileTrue(new IntakeTime(Intake, AlgaePosition.intake)); 
+        driverController.leftTrigger().whileTrue(new RotateTime(Intake));
         drivetrain.registerTelemetry(logger::telemeterize);
+        driverController.x().whileTrue(new ServoGo(servo));
     }
 
     /** Configures a set of control bindings for the robot's operator */
-    private void setOperatorControls() {
+    private void setOperatorControls() { 
         // Runs the auton command as an example binding
         operatorController.rightTrigger().whileTrue(new Shoot(shoot, .45));
         operatorController.b().whileTrue(new ClimberUp(climber, ClimberPosition.zero));
